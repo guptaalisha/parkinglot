@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import exceptions.AlreadyParkedException;
+import exceptions.ParkingLotFullException;
 
 public class ParkingLot {
 
@@ -14,7 +15,9 @@ public class ParkingLot {
         this.size = size;
     }
 
-    public void park(Parkable car) throws AlreadyParkedException {
+    public void park(Parkable car) throws AlreadyParkedException, ParkingLotFullException {
+        if (this.size == parkedVehicles.size())
+            throw new ParkingLotFullException("Parking lot size is full");
         if (parkedVehicles.contains(car))
             throw new AlreadyParkedException("Cannot park an already parked car");
         parkedVehicles.add(car);

@@ -1,6 +1,7 @@
 package org.thoughtworks;
 
 import exceptions.AlreadyParkedException;
+import exceptions.ParkingLotFullException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -10,9 +11,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 class ParkingLotTest {
+
     private ParkingLot parkingLotOne;
     private ParkingLot parkingLotTwo;
     static private Parkable carOne;
+    static private Parkable carTwo;
 
     @BeforeEach
     void beforeEach() {
@@ -22,7 +25,7 @@ class ParkingLotTest {
     }
 
     @Test
-    void testToParkACarInAParkingLot() throws AlreadyParkedException {
+    void testToParkACarInAParkingLot() throws AlreadyParkedException, ParkingLotFullException {
 
         parkingLotOne.park(carOne);
         Boolean actual = parkingLotOne.parkedVehicles.contains(carOne);
@@ -31,9 +34,9 @@ class ParkingLotTest {
     }
 
     @Test
-    void testThrowsExceptionForAlreadyParkedCar() throws AlreadyParkedException {
-
+    void testThrowsExceptionForAlreadyParkedCar() throws AlreadyParkedException, ParkingLotFullException {
         parkingLotTwo.park(carOne);
+
         AlreadyParkedException actual = assertThrows(AlreadyParkedException.class, () -> {
             parkingLotTwo.park(carOne);
         });
@@ -41,4 +44,15 @@ class ParkingLotTest {
         assertThat(actual.getMessage(), equalTo("Cannot park an already parked car"));
     }
 
+    @Test
+    void testThrowsExceptionWhenParkingLotIsFull() throws ParkingLotFullException, AlreadyParkedException {
+        carTwo = mock(Parkable.class);
+        parkingLotOne.park(carOne);
+
+        ParkingLotFullException actual = assertThrows(ParkingLotFullException.class, () -> {
+            parkingLotOne.park(carTwo);
+        });
+
+        assertThat(actual.getMessage(), equalTo("Parking lot size is full"));
+    }
 }
