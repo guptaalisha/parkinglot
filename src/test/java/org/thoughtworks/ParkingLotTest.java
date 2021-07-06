@@ -2,8 +2,7 @@ package org.thoughtworks;
 
 import exceptions.AlreadyParkedException;
 import exceptions.ParkingLotFullException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -17,42 +16,69 @@ class ParkingLotTest {
     static private Parkable carOne;
     static private Parkable carTwo;
 
+    @BeforeAll
+    static void beforeAll() {
+        carOne = mock(Parkable.class);
+    }
+
     @BeforeEach
     void beforeEach() {
         parkingLotOne = new ParkingLot(1);
         parkingLotTwo = new ParkingLot(2);
-        carOne = mock(Parkable.class);
     }
 
-    @Test
-    void testToParkACarInAParkingLot() throws AlreadyParkedException, ParkingLotFullException {
+    @Nested
+    @DisplayName("Park Car")
+    class ParkCar {
 
-        parkingLotOne.park(carOne);
-        Boolean actual = parkingLotOne.parkedVehicles.contains(carOne);
+        @Test
+        void testToParkACarInAParkingLot() throws AlreadyParkedException, ParkingLotFullException {
 
-        assertThat(actual, equalTo(Boolean.TRUE));
-    }
+            parkingLotOne.park(carOne);
+            Boolean actual = parkingLotOne.parkedVehicles.contains(carOne);
 
-    @Test
-    void testThrowsExceptionForAlreadyParkedCar() throws AlreadyParkedException, ParkingLotFullException {
-        parkingLotTwo.park(carOne);
+            assertThat(actual, equalTo(Boolean.TRUE));
+        }
 
-        AlreadyParkedException actual = assertThrows(AlreadyParkedException.class, () -> {
+        @Test
+        void testThrowsExceptionForAlreadyParkedCar() throws AlreadyParkedException, ParkingLotFullException {
             parkingLotTwo.park(carOne);
-        });
 
-        assertThat(actual.getMessage(), equalTo("Cannot park an already parked car"));
+            AlreadyParkedException actual = assertThrows(AlreadyParkedException.class, () -> {
+                parkingLotTwo.park(carOne);
+            });
+
+            assertThat(actual.getMessage(), equalTo("Cannot park an already parked car"));
+        }
+
+        @Test
+        void testThrowsExceptionWhenParkingLotIsFull() throws ParkingLotFullException, AlreadyParkedException {
+            carTwo = mock(Parkable.class);
+            parkingLotOne.park(carOne);
+
+            ParkingLotFullException actual = assertThrows(ParkingLotFullException.class, () -> {
+                parkingLotOne.park(carTwo);
+            });
+
+            assertThat(actual.getMessage(), equalTo("Parking lot size is full"));
+        }
+
     }
 
-    @Test
-    void testThrowsExceptionWhenParkingLotIsFull() throws ParkingLotFullException, AlreadyParkedException {
-        carTwo = mock(Parkable.class);
-        parkingLotOne.park(carOne);
+    @Nested
+    @DisplayName("Un-park Car")
+    class UnparkCar {
 
-        ParkingLotFullException actual = assertThrows(ParkingLotFullException.class, () -> {
-            parkingLotOne.park(carTwo);
-        });
+        @Test
+        void testToUnParkACarFromAParkingLot() throws AlreadyParkedException, ParkingLotFullException {
+            parkingLotOne.park(carOne);
 
-        assertThat(actual.getMessage(), equalTo("Parking lot size is full"));
+            parkingLotOne.unpark(carOne);
+            Boolean actual = parkingLotOne.parkedVehicles.contains(carOne);
+
+            assertThat(actual, equalTo(Boolean.FALSE));
+        }
     }
+
+
 }

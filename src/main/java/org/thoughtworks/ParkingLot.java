@@ -22,4 +22,8 @@ public class ParkingLot {
             throw new AlreadyParkedException("Cannot park an already parked car");
         parkedVehicles.add(car);
     }
+
+    public void unpark(Parkable car) {
+        parkedVehicles.remove(car);
+    }
 }
