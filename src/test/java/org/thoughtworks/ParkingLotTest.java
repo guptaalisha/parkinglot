@@ -106,5 +106,13 @@ class ParkingLotTest {
             parkingLotOne.park(carOne);
             verify(parkingLotOwner, times(1)).notifyParkingLotIsFull();
         }
+
+        @Test
+        public void testNotToNotifyParkingLotOwnerWhenParkingLotIsNotFull()
+                throws ParkingLotFullException, AlreadyParkedException {
+            parkingLotTwo.setOwner(parkingLotOwner);
+            parkingLotTwo.park(carOne);
+            verify(parkingLotOwner, never()).notifyParkingLotIsFull();
+        }
     }
 }
