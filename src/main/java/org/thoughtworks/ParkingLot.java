@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import exceptions.AlreadyParkedException;
+import exceptions.AlreadyUnParkedException;
 import exceptions.ParkingLotFullException;
 
 public class ParkingLot {
@@ -23,7 +24,9 @@ public class ParkingLot {
         parkedVehicles.add(car);
     }
 
-    public void unpark(Parkable car) {
+    public void unpark(Parkable car) throws AlreadyUnParkedException {
+        if (!parkedVehicles.contains(car))
+            throw new AlreadyUnParkedException("Cannot unpark a car which is not parked");
         parkedVehicles.remove(car);
     }
 }

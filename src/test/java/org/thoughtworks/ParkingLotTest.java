@@ -1,6 +1,7 @@
 package org.thoughtworks;
 
 import exceptions.AlreadyParkedException;
+import exceptions.AlreadyUnParkedException;
 import exceptions.ParkingLotFullException;
 import org.junit.jupiter.api.*;
 
@@ -70,13 +71,23 @@ class ParkingLotTest {
     class UnparkCar {
 
         @Test
-        void testToUnParkACarFromAParkingLot() throws AlreadyParkedException, ParkingLotFullException {
+        void testToUnParkACarFromAParkingLot() throws AlreadyParkedException,
+                ParkingLotFullException, AlreadyUnParkedException {
             parkingLotOne.park(carOne);
 
             parkingLotOne.unpark(carOne);
             Boolean actual = parkingLotOne.parkedVehicles.contains(carOne);
 
             assertThat(actual, equalTo(Boolean.FALSE));
+        }
+
+        @Test
+        void testThrowsExceptionForAlreadyUnParkedCar() throws AlreadyUnParkedException {
+            AlreadyUnParkedException actual = assertThrows(AlreadyUnParkedException.class, () -> {
+                parkingLotOne.unpark(carOne);
+            });
+
+            assertThat(actual.getMessage(), equalTo("Cannot unpark a car which is not parked"));
         }
     }
 
