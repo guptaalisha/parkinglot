@@ -1,14 +1,14 @@
 package org.thoughtworks;
 
 import exceptions.AlreadyParkedException;
-import exceptions.AlreadyUnParkedException;
+import exceptions.NotParkedException;
 import exceptions.ParkingLotFullException;
 import org.junit.jupiter.api.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 class ParkingLotTest {
 
@@ -16,10 +16,12 @@ class ParkingLotTest {
     private ParkingLot parkingLotTwo;
     static private Parkable carOne;
     static private Parkable carTwo;
+    static private Person parkingLotOwner;
 
     @BeforeAll
     static void beforeAll() {
         carOne = mock(Parkable.class);
+        parkingLotOwner = mock(Person.class);
     }
 
     @BeforeEach
@@ -63,7 +65,6 @@ class ParkingLotTest {
 
             assertThat(actual.getMessage(), equalTo("Parking lot size is full"));
         }
-
     }
 
     @Nested
@@ -72,7 +73,7 @@ class ParkingLotTest {
 
         @Test
         void testToUnParkACarFromAParkingLot() throws AlreadyParkedException,
-                ParkingLotFullException, AlreadyUnParkedException {
+                ParkingLotFullException, NotParkedException {
             parkingLotOne.park(carOne);
 
             parkingLotOne.unpark(carOne);
@@ -82,8 +83,11 @@ class ParkingLotTest {
         }
 
         @Test
-        void testThrowsExceptionForAlreadyUnParkedCar() throws AlreadyUnParkedException {
-            AlreadyUnParkedException actual = assertThrows(AlreadyUnParkedException.class, () -> {
+        void testThrowsExceptionForAlreadyUnParkedCar() throws AlreadyParkedException,
+                ParkingLotFullException, NotParkedException {
+            parkingLotOne.park(carOne);
+            parkingLotOne.unpark(carOne);
+            NotParkedException actual = assertThrows(NotParkedException.class, () -> {
                 parkingLotOne.unpark(carOne);
             });
 
@@ -91,5 +95,16 @@ class ParkingLotTest {
         }
     }
 
+    @Nested
+    @DisplayName("Notify Parking lot owner")
+    class NotifyOwner {
 
+        @Test
+        public void testNotifyParkingLotOwnerWhenParkingLotIsFull()
+                throws ParkingLotFullException, AlreadyParkedException {
+            parkingLotOne.setOwner(parkingLotOwner);
+            parkingLotOne.park(carOne);
+            verify(parkingLotOwner, times(1)).notifyParkingLotIsFull();
+        }
+    }
 }
