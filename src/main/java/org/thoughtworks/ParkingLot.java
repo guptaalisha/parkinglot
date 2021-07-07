@@ -19,10 +19,6 @@ public class ParkingLot {
         this.size = size;
     }
 
-    private Boolean parkingLotIsFull() {
-        return this.size == parkedVehicles.size();
-    }
-
     public void park(Parkable car) throws AlreadyParkedException, ParkingLotFullException {
         if (parkingLotIsFull())
             throw new ParkingLotFullException("Parking lot size is full");
@@ -36,6 +32,8 @@ public class ParkingLot {
     public void unpark(Parkable car) throws NotParkedException {
         if (!parkedVehicles.contains(car))
             throw new NotParkedException("Cannot unpark a car which is not parked");
+        if (parkingLotIsFull() && this.parkinglotObservers != null)
+            parkinglotObservers.beingNotifiedParkingLotHasSpaceAgain();
         parkedVehicles.remove(car);
     }
 
@@ -43,5 +41,7 @@ public class ParkingLot {
         this.parkinglotObservers.add(observer);
     }
 
-
+    private Boolean parkingLotIsFull() {
+        return this.size == parkedVehicles.size();
+    }
 }

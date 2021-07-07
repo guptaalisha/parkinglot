@@ -8,4 +8,9 @@ public class Observers extends ArrayList<ParkingLotObserver> {
             parkingLotObserver.beingNotifiedParkingLotIsFull();
         }
     }
+    public void beingNotifiedParkingLotHasSpaceAgain() {
+        for (ParkingLotObserver parkingLotObserver : this) {
+            parkingLotObserver.beingNotifiedParkingLotHasSpaceAgain();
+        }
+    }
 }
