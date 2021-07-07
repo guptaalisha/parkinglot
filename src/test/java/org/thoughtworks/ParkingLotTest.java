@@ -16,14 +16,14 @@ class ParkingLotTest {
     private ParkingLot parkingLotTwo;
     static private Parkable carOne;
     static private Parkable carTwo;
-    static private Person parkingLotOwner;
-    static private Person trafficCop;
+    static private ParkingLotObserver parkingLotOwner;
+    static private ParkingLotObserver trafficCop;
 
     @BeforeAll
     static void beforeAll() {
         carOne = mock(Parkable.class);
-        parkingLotOwner = mock(Person.class);
-        trafficCop = mock(Person.class);
+        parkingLotOwner = mock(ParkingLotObserver.class);
+        trafficCop = mock(ParkingLotObserver.class);
     }
 
     @BeforeEach
@@ -104,17 +104,17 @@ class ParkingLotTest {
         @Test
         public void testNotifyParkingLotOwnerWhenParkingLotIsFull()
                 throws ParkingLotFullException, AlreadyParkedException {
-            parkingLotOne.setOwner(parkingLotOwner);
+            parkingLotOne.setObserver(parkingLotOwner);
             parkingLotOne.park(carOne);
-            verify(parkingLotOwner, times(1)).notifyParkingLotIsFull();
+            verify(parkingLotOwner, times(1)).beingNotifiedParkingLotIsFull();
         }
 
         @Test
         public void testNotToNotifyParkingLotOwnerWhenParkingLotIsNotFull()
                 throws ParkingLotFullException, AlreadyParkedException {
-            parkingLotTwo.setOwner(parkingLotOwner);
+            parkingLotTwo.setObserver(parkingLotOwner);
             parkingLotTwo.park(carOne);
-            verify(parkingLotOwner, never()).notifyParkingLotIsFull();
+            verify(parkingLotOwner, never()).beingNotifiedParkingLotIsFull();
         }
     }
 
@@ -125,17 +125,17 @@ class ParkingLotTest {
         @Test
         public void testNotifyTrafficCopWhenParkingLotIsFull()
                 throws ParkingLotFullException, AlreadyParkedException {
-            parkingLotOne.setTrafficCopIncharge(trafficCop);
+            parkingLotOne.setObserver(trafficCop);
             parkingLotOne.park(carOne);
-            verify(trafficCop, times(1)).notifyParkingLotIsFull();
+            verify(trafficCop, times(1)).beingNotifiedParkingLotIsFull();
         }
 
         @Test
         public void testNotToNotifyTrafficCopWhenParkingLotIsNotFull()
                 throws ParkingLotFullException, AlreadyParkedException {
-            parkingLotTwo.setTrafficCopIncharge(trafficCop);
+            parkingLotTwo.setObserver(trafficCop);
             parkingLotTwo.park(carOne);
-            verify(trafficCop, never()).notifyParkingLotIsFull();
+            verify(trafficCop, never()).beingNotifiedParkingLotIsFull();
         }
     }
 }

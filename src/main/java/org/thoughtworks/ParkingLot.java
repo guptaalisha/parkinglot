@@ -9,12 +9,13 @@ import exceptions.ParkingLotFullException;
 
 public class ParkingLot {
 
-    final Set<Parkable> parkedVehicles = new HashSet<>();
+    final Set<Parkable> parkedVehicles;
     private final int size;
-    Person parkingLotOwner;
-    Person trafficCopIncharge;
+    private Observers parkinglotObservers;
 
     public ParkingLot(int size) {
+        parkedVehicles = new HashSet<>();
+        parkinglotObservers = new Observers();
         this.size = size;
     }
 
@@ -28,10 +29,8 @@ public class ParkingLot {
         if (parkedVehicles.contains(car))
             throw new AlreadyParkedException("Cannot park an already parked car");
         parkedVehicles.add(car);
-        if (parkingLotIsFull() && this.parkingLotOwner != null)
-            parkingLotOwner.notifyParkingLotIsFull();
-        if (parkingLotIsFull() && this.trafficCopIncharge != null)
-            trafficCopIncharge.notifyParkingLotIsFull();
+        if (parkingLotIsFull() && this.parkinglotObservers != null)
+            parkinglotObservers.beingNotifiedParkingLotIsFull();
     }
 
     public void unpark(Parkable car) throws NotParkedException {
@@ -40,11 +39,9 @@ public class ParkingLot {
         parkedVehicles.remove(car);
     }
 
-    public void setOwner(Person parkingLotOwner) {
-        this.parkingLotOwner = parkingLotOwner;
+    public void setObserver(ParkingLotObserver observer) {
+        this.parkinglotObservers.add(observer);
     }
 
-    public void setTrafficCopIncharge(Person trafficCop) {
-        this.trafficCopIncharge = trafficCop;
-    }
+
 }
