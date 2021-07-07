@@ -129,5 +129,13 @@ class ParkingLotTest {
             parkingLotOne.park(carOne);
             verify(trafficCop, times(1)).notifyParkingLotIsFull();
         }
+
+        @Test
+        public void testNotToNotifyTrafficCopWhenParkingLotIsNotFull()
+                throws ParkingLotFullException, AlreadyParkedException {
+            parkingLotTwo.setTrafficCopIncharge(trafficCop);
+            parkingLotTwo.park(carOne);
+            verify(trafficCop, never()).notifyParkingLotIsFull();
+        }
     }
 }
