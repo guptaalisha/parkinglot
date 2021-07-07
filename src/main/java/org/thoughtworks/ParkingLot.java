@@ -12,6 +12,7 @@ public class ParkingLot {
     final Set<Parkable> parkedVehicles = new HashSet<>();
     private final int size;
     Person parkingLotOwner;
+    Person trafficCopIncharge;
 
     public ParkingLot(int size) {
         this.size = size;
@@ -29,6 +30,8 @@ public class ParkingLot {
         parkedVehicles.add(car);
         if (parkingLotIsFull() && this.parkingLotOwner != null)
             parkingLotOwner.notifyParkingLotIsFull();
+        if (parkingLotIsFull() && this.trafficCopIncharge != null)
+            trafficCopIncharge.notifyParkingLotIsFull();
     }
 
     public void unpark(Parkable car) throws NotParkedException {
@@ -39,5 +42,9 @@ public class ParkingLot {
 
     public void setOwner(Person parkingLotOwner) {
         this.parkingLotOwner = parkingLotOwner;
+    }
+
+    public void setTrafficCopIncharge(Person trafficCop) {
+        this.trafficCopIncharge = trafficCop;
     }
 }

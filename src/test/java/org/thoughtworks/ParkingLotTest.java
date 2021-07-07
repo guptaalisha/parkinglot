@@ -17,11 +17,13 @@ class ParkingLotTest {
     static private Parkable carOne;
     static private Parkable carTwo;
     static private Person parkingLotOwner;
+    static private Person trafficCop;
 
     @BeforeAll
     static void beforeAll() {
         carOne = mock(Parkable.class);
         parkingLotOwner = mock(Person.class);
+        trafficCop = mock(Person.class);
     }
 
     @BeforeEach
@@ -113,6 +115,19 @@ class ParkingLotTest {
             parkingLotTwo.setOwner(parkingLotOwner);
             parkingLotTwo.park(carOne);
             verify(parkingLotOwner, never()).notifyParkingLotIsFull();
+        }
+    }
+
+    @Nested
+    @DisplayName("Notify road traffic cop")
+    class NotifyTrafficCop {
+
+        @Test
+        public void testNotifyTrafficCopWhenParkingLotIsFull()
+                throws ParkingLotFullException, AlreadyParkedException {
+            parkingLotOne.setTrafficCopIncharge(trafficCop);
+            parkingLotOne.park(carOne);
+            verify(trafficCop, times(1)).notifyParkingLotIsFull();
         }
     }
 }
