@@ -1,8 +1,8 @@
 package org.thoughtworks;
 
-import exceptions.AlreadyParkedException;
-import exceptions.NotParkedException;
-import exceptions.ParkingLotFullException;
+import org.thoughtworks.exceptions.AlreadyParkedException;
+import org.thoughtworks.exceptions.NotParkedException;
+import org.thoughtworks.exceptions.ParkingLotFullException;
 import org.junit.jupiter.api.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -18,11 +18,13 @@ class ParkingLotTest {
     static private Parkable carTwo;
     static private ParkingLotObserver parkingLotOwner;
     static private ParkingLotObserver trafficCop;
+    static private ParkingLot parkingLot;
 
     @BeforeAll
     static void beforeAll() {
         carOne = mock(Parkable.class);
         carTwo = mock(Parkable.class);
+        parkingLot = mock(ParkingLot.class);
     }
 
     @BeforeEach
@@ -103,7 +105,7 @@ class ParkingLotTest {
 
             parkingLotOne.park(carOne);
 
-            verify(parkingLotOwner, times(1)).beingNotifiedParkingLotIsFull();
+            verify(parkingLotOwner, times(1)).beingNotifiedParkingLotIsFull(parkingLot);
         }
 
         @Test
@@ -112,7 +114,7 @@ class ParkingLotTest {
 
             parkingLotTwo.park(carOne);
 
-            verify(parkingLotOwner, never()).beingNotifiedParkingLotIsFull();
+            verify(parkingLotOwner, never()).beingNotifiedParkingLotIsFull(parkingLot);
         }
 
         @Test
@@ -121,7 +123,7 @@ class ParkingLotTest {
 
             parkingLotOne.park(carOne);
 
-            verify(trafficCop, times(1)).beingNotifiedParkingLotIsFull();
+            verify(trafficCop, times(1)).beingNotifiedParkingLotIsFull(parkingLot);
         }
 
         @Test
@@ -130,7 +132,7 @@ class ParkingLotTest {
 
             parkingLotTwo.park(carOne);
 
-            verify(trafficCop, never()).beingNotifiedParkingLotIsFull();
+            verify(trafficCop, never()).beingNotifiedParkingLotIsFull(parkingLot);
         }
 
         @Test
@@ -141,8 +143,8 @@ class ParkingLotTest {
             parkingLotOne.park(carOne);
             parkingLotOne.unpark(carOne);
 
-            verify(trafficCop, times(1)).beingNotifiedParkingLotHasSpaceAgain();
-            verify(parkingLotOwner, times(1)).beingNotifiedParkingLotHasSpaceAgain();
+            verify(trafficCop, times(1)).beingNotifiedParkingLotHasSpaceAgain(parkingLot);
+            verify(parkingLotOwner, times(1)).beingNotifiedParkingLotHasSpaceAgain(parkingLot);
         }
 
         @Test
@@ -154,8 +156,8 @@ class ParkingLotTest {
             parkingLotTwo.park(carTwo);
             parkingLotTwo.unpark(carTwo);
 
-            verify(trafficCop, times(1)).beingNotifiedParkingLotHasSpaceAgain();
-            verify(parkingLotOwner, times(1)).beingNotifiedParkingLotHasSpaceAgain();
+            verify(trafficCop, times(1)).beingNotifiedParkingLotHasSpaceAgain(parkingLot);
+            verify(parkingLotOwner, times(1)).beingNotifiedParkingLotHasSpaceAgain(parkingLot);
         }
     }
 }

@@ -1,6 +1,6 @@
 package org.thoughtworks;
 
 public interface ParkingLotObserver {
-    void beingNotifiedParkingLotIsFull();
-    void beingNotifiedParkingLotHasSpaceAgain();
+    void beingNotifiedParkingLotIsFull(ParkingLot parkingLot);
+    void beingNotifiedParkingLotHasSpaceAgain(ParkingLot parkingLot);
 }

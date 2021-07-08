@@ -3,9 +3,9 @@ package org.thoughtworks;
 import java.util.HashSet;
 import java.util.Set;
 
-import exceptions.AlreadyParkedException;
-import exceptions.NotParkedException;
-import exceptions.ParkingLotFullException;
+import org.thoughtworks.exceptions.AlreadyParkedException;
+import org.thoughtworks.exceptions.NotParkedException;
+import org.thoughtworks.exceptions.ParkingLotFullException;
 
 public class ParkingLot {
 
@@ -20,20 +20,21 @@ public class ParkingLot {
     }
 
     public void park(Parkable car) throws AlreadyParkedException, ParkingLotFullException {
-        if (parkingLotIsFull())
-            throw new ParkingLotFullException("Parking lot size is full");
+        if (isFull() && parkinglotObservers != null)
+            parkinglotObservers.beingNotifiedParkingLotIsFull(this);
         if (parkedVehicles.contains(car))
             throw new AlreadyParkedException("Cannot park an already parked car");
         parkedVehicles.add(car);
-        if (parkingLotIsFull() && this.parkinglotObservers != null)
-            parkinglotObservers.beingNotifiedParkingLotIsFull();
+        if (isFull())
+            throw new ParkingLotFullException("Parking lot size is full");
+
     }
 
     public void unpark(Parkable car) throws NotParkedException {
         if (!parkedVehicles.contains(car))
             throw new NotParkedException("Cannot unpark a car which is not parked");
-        if (parkingLotIsFull() && this.parkinglotObservers != null)
-            parkinglotObservers.beingNotifiedParkingLotHasSpaceAgain();
+        if (isFull() && this.parkinglotObservers != null)
+            parkinglotObservers.beingNotifiedParkingLotHasSpaceAgain(this);
         parkedVehicles.remove(car);
     }
 
@@ -41,7 +42,7 @@ public class ParkingLot {
         this.parkinglotObservers.add(observer);
     }
 
-    private Boolean parkingLotIsFull() {
+    Boolean isFull() {
         return this.size == parkedVehicles.size();
     }
 }
