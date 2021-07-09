@@ -18,13 +18,11 @@ class ParkingLotTest {
     static private Parkable carTwo;
     static private ParkingLotObserver parkingLotOwner;
     static private ParkingLotObserver trafficCop;
-    static private ParkingLot parkingLot;
 
     @BeforeAll
     static void beforeAll() {
         carOne = mock(Parkable.class);
         carTwo = mock(Parkable.class);
-        parkingLot = mock(ParkingLot.class);
     }
 
     @BeforeEach
@@ -40,7 +38,7 @@ class ParkingLotTest {
     class ParkCar {
 
         @Test
-        void testToParkACarInAParkingLot() throws Exception{
+        void testToParkACarInAParkingLot() throws Exception {
             parkingLotOne.park(carOne);
             Boolean actual = parkingLotOne.parkedVehicles.contains(carOne);
 
@@ -48,7 +46,7 @@ class ParkingLotTest {
         }
 
         @Test
-        void testThrowsExceptionForAlreadyParkedCar() throws Exception{
+        void testThrowsExceptionForAlreadyParkedCar() throws Exception {
             parkingLotTwo.park(carOne);
 
             AlreadyParkedException actual = assertThrows(AlreadyParkedException.class, () -> {
@@ -75,8 +73,9 @@ class ParkingLotTest {
     class UnparkCar {
 
         @Test
-        void testToUnParkACarFromAParkingLot() throws Exception{
+        void testToUnParkACarFromAParkingLot() throws Exception {
             parkingLotOne.park(carOne);
+
             parkingLotOne.unpark(carOne);
             Boolean actual = parkingLotOne.parkedVehicles.contains(carOne);
 
@@ -84,9 +83,10 @@ class ParkingLotTest {
         }
 
         @Test
-        void testThrowsExceptionForAlreadyUnParkedCar() throws Exception{
+        void testThrowsExceptionForAlreadyUnParkedCar() throws Exception {
             parkingLotOne.park(carOne);
             parkingLotOne.unpark(carOne);
+
             NotParkedException actual = assertThrows(NotParkedException.class, () -> {
                 parkingLotOne.unpark(carOne);
             });
@@ -102,62 +102,58 @@ class ParkingLotTest {
         @Test
         public void testNotifyParkingLotOwnerWhenParkingLotIsFull() throws Exception {
             parkingLotOne.setObserver(parkingLotOwner);
-
             parkingLotOne.park(carOne);
 
-            verify(parkingLotOwner, times(1)).beingNotifiedParkingLotIsFull(parkingLot);
+            verify(parkingLotOwner, times(1)).beingNotifiedParkingLotIsFull(parkingLotOne);
         }
 
         @Test
-        public void testNotToNotifyParkingLotOwnerWhenParkingLotIsNotFull() throws Exception{
+        public void testNotToNotifyParkingLotOwnerWhenParkingLotIsNotFull() throws Exception {
             parkingLotTwo.setObserver(parkingLotOwner);
-
             parkingLotTwo.park(carOne);
 
-            verify(parkingLotOwner, never()).beingNotifiedParkingLotIsFull(parkingLot);
+            verify(parkingLotOwner, never()).beingNotifiedParkingLotIsFull(parkingLotTwo);
         }
 
         @Test
-        public void testNotifyTrafficCopWhenParkingLotIsFull() throws Exception{
+        public void testNotifyTrafficCopWhenParkingLotIsFull() throws Exception {
             parkingLotOne.setObserver(trafficCop);
-
             parkingLotOne.park(carOne);
 
-            verify(trafficCop, times(1)).beingNotifiedParkingLotIsFull(parkingLot);
+            verify(trafficCop, times(1)).beingNotifiedParkingLotIsFull(parkingLotOne);
         }
 
         @Test
-        public void testNotToNotifyTrafficCopWhenParkingLotIsNotFull() throws Exception{
+        public void testNotToNotifyTrafficCopWhenParkingLotIsNotFull() throws Exception {
             parkingLotTwo.setObserver(trafficCop);
-
             parkingLotTwo.park(carOne);
 
-            verify(trafficCop, never()).beingNotifiedParkingLotIsFull(parkingLot);
+            verify(trafficCop, never()).beingNotifiedParkingLotIsFull(parkingLotTwo);
         }
 
         @Test
-        public void testNotifyObserversWhenParkingLotHasSpace() throws Exception{
+        public void testNotifyObserversWhenParkingLotHasSpace() throws Exception {
             parkingLotOne.setObserver(trafficCop);
             parkingLotOne.setObserver(parkingLotOwner);
-
             parkingLotOne.park(carOne);
+
             parkingLotOne.unpark(carOne);
 
-            verify(trafficCop, times(1)).beingNotifiedParkingLotHasSpaceAgain(parkingLot);
-            verify(parkingLotOwner, times(1)).beingNotifiedParkingLotHasSpaceAgain(parkingLot);
+            verify(trafficCop, times(1)).beingNotifiedParkingLotHasSpaceAgain(parkingLotOne);
+            verify(parkingLotOwner, times(1)).beingNotifiedParkingLotHasSpaceAgain(parkingLotOne);
         }
 
         @Test
-        public void testNotifyObserversWhenParkingLotHasSpaceAgain() throws Exception{
+        public void testNotifyObserversWhenParkingLotHasSpaceAgain() throws Exception {
             parkingLotTwo.setObserver(trafficCop);
             parkingLotTwo.setObserver(parkingLotOwner);
-
             parkingLotTwo.park(carOne);
             parkingLotTwo.park(carTwo);
+
             parkingLotTwo.unpark(carTwo);
 
-            verify(trafficCop, times(1)).beingNotifiedParkingLotHasSpaceAgain(parkingLot);
-            verify(parkingLotOwner, times(1)).beingNotifiedParkingLotHasSpaceAgain(parkingLot);
+            verify(trafficCop, times(1)).beingNotifiedParkingLotHasSpaceAgain(parkingLotTwo);
+            verify(parkingLotOwner, times(1)).beingNotifiedParkingLotHasSpaceAgain(parkingLotTwo);
         }
     }
 }

@@ -3,6 +3,7 @@ package org.thoughtworks;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.thoughtworks.exceptions.AllManagedParkingLotsFullException;
 import org.thoughtworks.exceptions.AlreadyParkedException;
 import org.thoughtworks.exceptions.ParkingLotFullException;
 
@@ -42,7 +43,12 @@ public class ParkingLotAttendantTest {
     public void testToParkACarInTheOnlyManagedParkingLot() throws Exception {
         ParkingLotAttendant attendant = new ParkingLotAttendant();
         attendant.manages(parkingLotTwo);
+
         attendant.navigate(carOne);
+
+        assertThrows(AlreadyParkedException.class, () -> {
+            parkingLotTwo.park(carOne);
+        });
     }
 
     @Test
@@ -50,8 +56,12 @@ public class ParkingLotAttendantTest {
         ParkingLotAttendant attendant = new ParkingLotAttendant();
         attendant.manages(parkingLotTwo);
         attendant.manages(parkingLotThree);
+
         attendant.navigate(carOne);
-        assertThrows(AlreadyParkedException.class, ()-> {parkingLotTwo.park(carOne);});
+
+        assertThrows(AlreadyParkedException.class, () -> {
+            parkingLotTwo.park(carOne);
+        });
     }
 
     @Test
@@ -61,11 +71,36 @@ public class ParkingLotAttendantTest {
         attendant.manages(parkingLotThree);
         attendant.navigate(carOne);
         attendant.navigate(carTwo);
+
         attendant.navigate(carThree);
 
-//        assertThat(parkingLotThree.parkedVehicles.contains(carThree),is(Boolean.TRUE));
-        assertThrows(AlreadyParkedException.class, ()->
-                parkingLotThree.park(carThree));
+        assertThrows(AlreadyParkedException.class, () -> {
+            parkingLotThree.park(carThree);
+        });
+    }
 
+    @Test
+    public void testForExceptionWhenAllManagedParkingLotsAreFull() throws Exception {
+        ParkingLotAttendant attendant = new ParkingLotAttendant();
+        attendant.manages(parkingLotTwo);
+        attendant.manages(parkingLotThree);
+        attendant.navigate(carOne);
+        attendant.navigate(carTwo);
+        attendant.navigate(carThree);
+        attendant.navigate(carFour);
+        attendant.navigate(carFive);
+
+        assertThrows(AllManagedParkingLotsFullException.class, () ->
+                attendant.navigate(carSix));
+    }
+
+    @Test
+    public void testForExceptionWhenParkingSameCarAgain() throws Exception {
+        ParkingLotAttendant attendant = new ParkingLotAttendant();
+        attendant.manages(parkingLotTwo);
+        attendant.navigate(carOne);
+
+        assertThrows(AlreadyParkedException.class, () ->
+                attendant.navigate(carOne));
     }
 }

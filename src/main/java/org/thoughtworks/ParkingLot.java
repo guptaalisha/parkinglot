@@ -20,22 +20,26 @@ public class ParkingLot {
     }
 
     public void park(Parkable car) throws AlreadyParkedException, ParkingLotFullException {
-        if (isFull() && parkinglotObservers != null)
-            parkinglotObservers.beingNotifiedParkingLotIsFull(this);
+        if (isFull())
+            throw new ParkingLotFullException("Parking lot size is full");
         if (parkedVehicles.contains(car))
             throw new AlreadyParkedException("Cannot park an already parked car");
         parkedVehicles.add(car);
-        if (isFull())
-            throw new ParkingLotFullException("Parking lot size is full");
-
+        if (isFull() && parkinglotObservers != null)
+            parkinglotObservers.beingNotifiedParkingLotIsFull(this);
     }
 
     public void unpark(Parkable car) throws NotParkedException {
         if (!parkedVehicles.contains(car))
             throw new NotParkedException("Cannot unpark a car which is not parked");
-        if (isFull() && this.parkinglotObservers != null)
-            parkinglotObservers.beingNotifiedParkingLotHasSpaceAgain(this);
         parkedVehicles.remove(car);
+        if (hasSpaceAgain() && this.parkinglotObservers != null)
+            parkinglotObservers.beingNotifiedParkingLotHasSpaceAgain(this);
+
+    }
+
+    private Boolean hasSpaceAgain() {
+        return parkedVehicles.size() == size - 1;
     }
 
     public void setObserver(ParkingLotObserver observer) {
